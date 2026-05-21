@@ -348,9 +348,11 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   <div class="footer-content">
     <p>Cost estimates based on Anthropic API pricing (<a href="https://claude.com/pricing#api" target="_blank">claude.com/pricing#api</a>) as of April 2026. Only models containing <em>opus</em>, <em>sonnet</em>, or <em>haiku</em> in the name are included in cost calculations. Actual costs for Max/Pro subscribers differ from API pricing.</p>
     <p>
-      GitHub: <a href="https://github.com/phuryn/claude-usage" target="_blank">https://github.com/phuryn/claude-usage</a>
+      GitHub: <a href="https://github.com/michaelbiafore/ClaudeUsageDashboard" target="_blank">https://github.com/michaelbiafore/ClaudeUsageDashboard</a>
       &nbsp;&middot;&nbsp;
       Created by: <a href="https://www.productcompass.pm" target="_blank">The Product Compass Newsletter</a>
+      &nbsp;&middot;&nbsp;
+      This fork: Michael Biafore + Claude Opus 4.7
       &nbsp;&middot;&nbsp;
       License: MIT
     </p>
