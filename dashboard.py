@@ -112,12 +112,18 @@ def get_dashboard_data(db_path=DB_PATH):
 
     conn.close()
 
+    try:
+        db_mtime = datetime.fromtimestamp(db_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+    except OSError:
+        db_mtime = None
+
     return {
         "all_models":      all_models,
         "daily_by_model":  daily_by_model,
         "hourly_by_model": hourly_by_model,
         "sessions_all":    sessions_all,
         "generated_at":    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "db_mtime":        db_mtime,
     }
 
 
@@ -742,7 +748,7 @@ function applyFilter() {
 
   // Hourly aggregation (filtered by model + range, then bucketed by UTC hour)
   const hourlySrc = (rawData.hourly_by_model || []).filter(r =>
-    selectedModels.has(r.model) && (!cutoff || r.day >= cutoff)
+    selectedModels.has(r.model) && (!start || r.day >= start) && (!end || r.day <= end)
   );
   const hourlyAgg = aggregateHourly(hourlySrc, hourlyTZ);
 
@@ -1192,7 +1198,8 @@ async function loadData() {
       return;
     }
     const refreshNote = rangeIncludesToday(selectedRange) ? ' \u00b7 Auto-refresh in 30s' : '';
-    document.getElementById('meta').textContent = 'Updated: ' + d.generated_at + refreshNote;
+    const dbNote = d.db_mtime ? ' \u00b7 DB scanned: ' + d.db_mtime : '';
+    document.getElementById('meta').textContent = 'Updated: ' + d.generated_at + dbNote + refreshNote;
 
     const isFirstLoad = rawData === null;
     rawData = d;
@@ -1300,4 +1307,9 @@ def serve(host=None, port=None):
 
 
 if __name__ == "__main__":
+    # Scan before serving so a direct `python dashboard.py` invocation isn't
+    # served stale data. Mirrors what `python cli.py dashboard` does.
+    import scanner
+    scanner.scan()
+    print()
     serve()
